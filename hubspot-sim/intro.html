@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Boundless Connection</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@200;300&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #fff;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    #measure-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      white-space: nowrap;
+      pointer-events: none;
+      visibility: hidden;
+    }
+
+    #ghost-stage, #stage {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .char {
+      position: absolute;
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(28px, 3.5vw, 56px);
+      font-weight: 200;
+      letter-spacing: 0.22em;
+      color: #111;
+      transform-origin: center center;
+      user-select: none;
+      will-change: transform;
+      white-space: pre;
+    }
+
+    .char-ghost {
+      position: absolute;
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(28px, 3.5vw, 56px);
+      font-weight: 200;
+      letter-spacing: 0.22em;
+      color: #bbb;
+      transform-origin: center center;
+      user-select: none;
+      white-space: pre;
+      opacity: 0;
+    }
+
+    /* ── Controls Panel ── */
+    #controls {
+      position: fixed;
+      top: 24px;
+      left: 28px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 220px;
+    }
+
+    .ctrl-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .ctrl-label {
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,0.35);
+      width: 88px;
+      flex-shrink: 0;
+    }
+
+    .ctrl-row input[type=range] {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 1px;
+      background: rgba(0,0,0,0.15);
+      outline: none;
+      cursor: pointer;
+    }
+    .ctrl-row input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #111;
+      cursor: pointer;
+    }
+
+    .ctrl-val {
+      font-size: 10px;
+      font-weight: 300;
+      color: rgba(0,0,0,0.4);
+      width: 26px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    #apply-btn {
+      margin-top: 2px;
+      align-self: flex-start;
+      background: none;
+      border: none;
+      border-bottom: 1px solid #111;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #111;
+      cursor: pointer;
+      padding: 2px 0;
+      transition: opacity 0.2s;
+    }
+    #apply-btn:hover { opacity: 0.5; }
+
+    #scroll-hint {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,0.22);
+      pointer-events: none;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+
+<div id="controls">
+  <div class="ctrl-row">
+    <span class="ctrl-label">Scatter dist</span>
+    <input type="range" id="r-dist-min" min="0.05" max="0.8" step="0.01" value="0.28">
+    <span class="ctrl-val" id="v-dist-min">0.28</span>
+  </div>
+  <div class="ctrl-row">
+    <span class="ctrl-label">Scatter max</span>
+    <input type="range" id="r-dist-max" min="0.1" max="1.2" step="0.01" value="0.58">
+    <span class="ctrl-val" id="v-dist-max">0.58</span>
+  </div>
+  <div class="ctrl-row">
+    <span class="ctrl-label">Rotation</span>
+    <input type="range" id="r-rot" min="0" max="360" step="5" value="200">
+    <span class="ctrl-val" id="v-rot">200</span>
+  </div>
+  <div class="ctrl-row">
+    <span class="ctrl-label">Scatter spd</span>
+    <input type="range" id="r-sdur-min" min="0.3" max="3.0" step="0.1" value="1.4">
+    <span class="ctrl-val" id="v-sdur-min">1.4</span>
+  </div>
+  <div class="ctrl-row">
+    <span class="ctrl-label">Scatter max</span>
+    <input type="range" id="r-sdur-max" min="0.5" max="4.0" step="0.1" value="2.0">
+    <span class="ctrl-val" id="v-sdur-max">2.0</span>
+  </div>
+  <div class="ctrl-row">
+    <span class="ctrl-label">Return spd</span>
+    <input type="range" id="r-cdur-min" min="0.5" max="4.0" step="0.1" value="2.0">
+    <span class="ctrl-val" id="v-cdur-min">2.0</span>
+  </div>
+  <div class="ctrl-row">
+    <span class="ctrl-label">Return max</span>
+    <input type="range" id="r-cdur-max" min="0.5" max="5.0" step="0.1" value="2.8">
+    <span class="ctrl-val" id="v-cdur-max">2.8</span>
+  </div>
+  <div class="ctrl-row">
+    <span class="ctrl-label">Start delay</span>
+    <input type="range" id="r-delay" min="0" max="1.5" step="0.05" value="0.5">
+    <span class="ctrl-val" id="v-delay">0.5</span>
+  </div>
+  <button id="apply-btn">Apply</button>
+</div>
+
+<div id="measure-container"></div>
+<div id="ghost-stage"></div>
+<div id="stage"></div>
+<div id="scroll-hint">Please scroll down</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+(function () {
+  const TEXT       = 'BOUNDLESS CONNECTION'
+  const stage      = document.getElementById('stage')
+  const ghostStage = document.getElementById('ghost-stage')
+  const mc         = document.getElementById('measure-container')
+  const FS         = 'clamp(28px, 3.5vw, 56px)'
+  const FONT       = "'DM Sans', sans-serif"
+
+  /* ── 파라미터 ── */
+  const P = {
+    distMin:  0.28,
+    distMax:  0.58,
+    rot:      200,
+    sdurMin:  1.4,
+    sdurMax:  2.0,
+    cdurMin:  2.0,
+    cdurMax:  2.8,
+    delay:    0.5,
+  }
+
+  /* 슬라이더 연동 */
+  const sliders = [
+    { id: 'r-dist-min',  val: 'v-dist-min',  key: 'distMin',  fmt: v => v.toFixed(2) },
+    { id: 'r-dist-max',  val: 'v-dist-max',  key: 'distMax',  fmt: v => v.toFixed(2) },
+    { id: 'r-rot',       val: 'v-rot',       key: 'rot',      fmt: v => Math.round(v) },
+    { id: 'r-sdur-min',  val: 'v-sdur-min',  key: 'sdurMin',  fmt: v => v.toFixed(1) },
+    { id: 'r-sdur-max',  val: 'v-sdur-max',  key: 'sdurMax',  fmt: v => v.toFixed(1) },
+    { id: 'r-cdur-min',  val: 'v-cdur-min',  key: 'cdurMin',  fmt: v => v.toFixed(1) },
+    { id: 'r-cdur-max',  val: 'v-cdur-max',  key: 'cdurMax',  fmt: v => v.toFixed(1) },
+    { id: 'r-delay',     val: 'v-delay',     key: 'delay',    fmt: v => v.toFixed(2) },
+  ]
+
+  sliders.forEach(({ id, val, key, fmt }) => {
+    const input = document.getElementById(id)
+    const label = document.getElementById(val)
+    input.addEventListener('input', () => {
+      P[key] = parseFloat(input.value)
+      label.textContent = fmt(P[key])
+    })
+  })
+
+  /* ── 좌표 측정 ── */
+  const measureSpans = [...TEXT].map((ch) => {
+    const s = document.createElement('span')
+    s.textContent = ch === ' ' ? '\u00a0' : ch
+    s.style.cssText = `font-family:${FONT};font-size:${FS};font-weight:200;letter-spacing:0.22em;white-space:pre;`
+    mc.appendChild(s)
+    return s
+  })
+
+  const origins = measureSpans.map((s) => {
+    const r = s.getBoundingClientRect()
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 }
+  })
+  mc.remove()
+
+  /* ── ghost span ── */
+  const ghosts = [...TEXT].map((ch, i) => {
+    const span = document.createElement('span')
+    span.className = 'char-ghost'
+    span.textContent = ch === ' ' ? '\u00a0' : ch
+    gsap.set(span, { x: origins[i].x, y: origins[i].y, xPercent: -50, yPercent: -50 })
+    ghostStage.appendChild(span)
+    return span
+  })
+
+  /* ── 실제 span ── */
+  const spans = [...TEXT].map((ch, i) => {
+    const span = document.createElement('span')
+    span.className = 'char'
+    span.textContent = ch === ' ' ? '\u00a0' : ch
+    gsap.set(span, { x: origins[i].x, y: origins[i].y, xPercent: -50, yPercent: -50, rotation: 0 })
+    stage.appendChild(span)
+    return span
+  })
+
+  /* ── 유틸 ── */
+  const rand = (a, b) => a + Math.random() * (b - a)
+  const VW   = window.innerWidth
+  const VH   = window.innerHeight
+
+  function resetAll() {
+    gsap.killTweensOf([...spans, ...ghosts])
+    spans.forEach((span, i) => {
+      gsap.set(span,      { x: origins[i].x, y: origins[i].y, xPercent: -50, yPercent: -50, rotation: 0, opacity: 1 })
+      gsap.set(ghosts[i], { opacity: 0 })
+    })
+  }
+
+  /* ── Drift 루프 ── */
+  let loopRunning = false
+
+  function playDrift() {
+    loopRunning = true
+    let done = 0
+
+    spans.forEach((span, i) => {
+      const angle      = rand(0, Math.PI * 2)
+      const dist       = rand(VW * P.distMin, VW * P.distMax)
+      const tx         = VW / 2 + Math.cos(angle) * dist
+      const ty         = VH / 2 + Math.sin(angle) * dist
+      const rot        = rand(-P.rot, P.rot)
+      const startDelay = rand(0, P.delay)
+      const scatterDur = rand(P.sdurMin, P.sdurMax)
+      const convergeDur = rand(P.cdurMin, P.cdurMax)
+
+      gsap.to(ghosts[i], { opacity: 0.18, duration: 0.4, ease: 'power1.in', delay: startDelay })
+      gsap.to(span, {
+        x: tx, y: ty, rotation: rot,
+        duration: scatterDur, ease: 'power1.inOut', delay: startDelay,
+        onComplete() {
+          gsap.to(ghosts[i], { opacity: 0, duration: convergeDur * 0.6, ease: 'power1.inOut' })
+          gsap.to(span, {
+            x: origins[i].x, y: origins[i].y, xPercent: -50, yPercent: -50, rotation: 0,
+            duration: convergeDur, ease: 'power1.inOut',
+            onComplete() {
+              if (++done === spans.length && loopRunning) playDrift()
+            }
+          })
+        }
+      })
+    })
+  }
+
+  /* Apply 버튼: 현재 루프 중단 → 파라미터 적용 → 재시작 */
+  document.getElementById('apply-btn').addEventListener('click', () => {
+    loopRunning = false
+    resetAll()
+    gsap.delayedCall(0.05, () => playDrift())
+  })
+
+  /* 첫 시작 */
+  gsap.delayedCall(0.8, playDrift)
+
+})()
+</script>
+</body>
+</html>

@@ -4,6 +4,7 @@
     { "source": "/", "destination": "/branding.html" },
     { "source": "/work/branding", "destination": "/branding.html" },
     { "source": "/work/campaign", "destination": "/campaign.html" },
-    { "source": "/work/digital", "destination": "/digital.html" }
+    { "source": "/work/digital", "destination": "/digital.html" },
+    { "source": "/intro", "destination": "/intro.html" }
   ]
 }
