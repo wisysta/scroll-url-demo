@@ -2,7 +2,8 @@
   "name": "scroll-url-demo",
   "version": "1.0.0",
   "scripts": {
-    "dev": "vite"
+    "dev": "vite",
+    "serve": "python3 -m http.server 8080 --directory hubspot-sim"
   },
   "devDependencies": {
     "vite": "^5.0.0"

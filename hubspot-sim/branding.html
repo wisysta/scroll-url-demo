@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Branding — Work</title>
+
+  <!--
+    HubSpot: Design Manager > Stylesheets
+    글로벌 스타일시트로 등록하면 모든 페이지에 자동 적용
+  -->
+  <link rel="stylesheet" href="assets/transition.css" />
+</head>
+<body>
+
+  <!--
+    HubSpot: 글로벌 헤더 모듈 (모든 페이지 공통)
+    실제 HubSpot에서는 Global Header 영역에 배치
+  -->
+  <div id="url-bar">localhost:3000<span></span></div>
+  <div id="scroll-hint"><p>Scroll</p><div class="arrow-line"></div></div>
+  <div id="page-label"></div>
+  <div id="loading-overlay">
+    <p class="loading-label" id="loading-text">Loading</p>
+    <div class="loading-bar-track"><div class="loading-bar-fill" id="loading-bar"></div></div>
+  </div>
+
+  <!--
+    HubSpot: 페이지별 고유 메타 (각 템플릿마다 다르게 설정)
+    data-next / data-prev 는 없으면 빈 문자열
+  -->
+  <div id="page-meta"
+       data-label="Page A"
+       data-url="/work/branding"
+       data-next="campaign.html"
+       data-prev="">
+  </div>
+
+  <!--
+    HubSpot: 페이지별 콘텐츠 모듈 (각 템플릿마다 다르게 설정)
+    섹션 구조는 동일, 텍스트/이미지만 교체
+  -->
+  <div id="page-content">
+
+    <section class="section" data-index="0">
+      <div class="section-bg" style="background-image:url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1600&q=80')"></div>
+      <div class="section-overlay"></div>
+      <div class="section-content">
+        <p class="section-tag">Branding — 01</p>
+        <h2>Bold Flavor,<br>Bolder Identity</h2>
+        <p>The starting point was understanding what makes fans keep coming back — not just the food, but the feeling of being part of something electric.</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="section" data-index="1">
+      <div class="section-bg" style="background-image:url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1600&q=80')"></div>
+      <div class="section-overlay"></div>
+      <div class="section-content">
+        <p class="section-tag">Branding — 02</p>
+        <h2>Every Detail<br>Tells the Story</h2>
+        <p>From typography to color systems, every decision was anchored in the raw energy of game night — loud, confident, and impossible to ignore.</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="section" data-index="2">
+      <div class="section-bg" style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1600&q=80')"></div>
+      <div class="section-overlay"></div>
+      <div class="section-content">
+        <p class="section-tag">Branding — 03</p>
+        <h2>A System Built<br>to Scale</h2>
+        <p>The new brand system was built with flexibility in mind — from restaurant signage to digital ads, the identity holds its own in every context.</p>
+      </div>
+    </section>
+
+    <!-- 다음 페이지 트리거 센티넬 (마지막 섹션 뒤에 위치) -->
+    <div class="sentinel"></div>
+
+  </div><!-- /#page-content -->
+
+  <!--
+    HubSpot: 글로벌 푸터 모듈 (모든 페이지 공통)
+    실제 HubSpot에서는 Global Footer 영역에 JS 삽입
+  -->
+  <script src="assets/transition.js"></script>
+
+</body>
+</html>
